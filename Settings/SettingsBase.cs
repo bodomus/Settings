@@ -18,7 +18,6 @@ namespace LottoSheli.SendPrinter.Settings.Settings
     {
         protected abstract string SectionName { get; }
         protected static string DbName = "settings.db";
-        //protected abstract string JsonFileName { get; }
         private readonly SettingsStore _settingsStore = SettingsStore.Instance;
         public static string LottoHome => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "LottoSendPrinter");
         private static string DbFileName => Path.Combine(LottoHome, DbName);
@@ -37,22 +36,14 @@ namespace LottoSheli.SendPrinter.Settings.Settings
 
         protected void Load()
         {
-
-            var isInDB = SettingsStore.Instance.HasSettings(SectionName);
-            CurrentSettings = _settingsStore.GetSettingsFromDB<T>(SectionName);
-            CurrentSettings = isInDB
-                ? CurrentSettings
+            CurrentSettings = SettingsStore.Instance.HasSettings(SectionName)
+                ? SettingsStore.Instance.GetSettingsFromDB<T>(SectionName)
                 : LoadJson<T>(DefaultSettingsFile);
-        }
-
-        protected void LoadDefault()
-        {
-            throw new NotImplementedException();
         }
 
         protected void SaveData(T sett)
         {
-            throw new NotImplementedException();
+            _settingsStore.SaveSettingsToDB(sett, SectionName);
         }
 
         protected T LoadJson<T>(string fileName)

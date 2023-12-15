@@ -44,23 +44,11 @@ namespace LottoSheli.SendPrinter.Settings.Factory
 
             _serviceProvider = services.BuildServiceProvider();
             var s = _serviceProvider.GetService<IOptions<CommonSettings>>();
-
-
-
-
-
-            //var sc = _serviceProvider.GetService(typeof(ScannerSettingsAdapter));
-            //var t = _serviceProvider.GetRequiredService<ScannerSettingsAdapter>();
-            //IScannerSettings t1 = t.Get();
             var setFactory = _serviceProvider.GetRequiredService<ISettingsFactory>();
-            //var ocr = setFactory.GetOcrSettings();
-            //var scan = setFactory.GetScannerSettings();
             var sc = _serviceProvider.GetService(typeof(ScannerSettingsAdapter));
             var settings = setFactory.GetScannerSettings();
             settings.Scanner_SnippetRectangle_Height = 1000;
-            //setFactory.SaveScannerSettings(settings);
-
-
+            setFactory.SaveScannerSettings(settings);
         }
 
         private void InitSettings(ServiceCollection services)
@@ -68,7 +56,6 @@ namespace LottoSheli.SendPrinter.Settings.Factory
             services.AddSingleton<ISettingsFactory>(new DependencyInjectionSettingsFactory(GetServiceProvider))
                 .AddSingleton<IRemoteSettings, RemoteSettings.RemoteSettings>()
                 .AddSingleton<IScannerSettings, ScannerSettings.ScannerSettings>()
-                //.AddSingleton<IAdapter<ScannerSettings.ScannerSettingsAdapter>, ScannerSettingsAdapter<ScannerSettings.ScannerSettings>>()
                 .AddSingleton<IOcrSettings, OcrSettings.OcrSettings>()
                 .AddTransient<ScannerSettingsAdapter>();
         }

@@ -15,17 +15,26 @@ namespace LottoSheli.SendPrinter.Settings.Factory
             _serviceProviderStrategy = serviceProviderStrategy;
         }
 
-        public IScannerSettings GetScannerSettings()
+        public ScannerSettings.ScannerSettings GetScannerSettings()
         {
              var s = _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
              //_serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>().Save();
              return s.Get();
         }
 
-
         public void SaveScannerSettings(ScannerSettings.ScannerSettings settings)
         {
-            _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
+            
+            var adapter = _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
+            adapter.Save(settings);
+        }
+
+        public void SaveScannerSettings()
+        {
+            var adapter = _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
+            var settings = adapter.Get();
+            adapter.Save(settings);
+            throw new NotImplementedException();
         }
 
         public IOcrSettings GetOcrSettings()
@@ -36,14 +45,6 @@ namespace LottoSheli.SendPrinter.Settings.Factory
         public IRemoteSettings GetRemoteSettings()
         {
             return _serviceProviderStrategy().GetRequiredService<IRemoteSettings>();
-        }
-
-        public void SaveScannerSettings()
-        {
-            var adapter = _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
-            var settings = adapter.Get();
-            adapter.Save(settings);
-            throw new NotImplementedException();
         }
     }
 }

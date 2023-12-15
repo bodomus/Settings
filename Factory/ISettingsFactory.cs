@@ -6,9 +6,10 @@ namespace LottoSheli.SendPrinter.Settings.Factory
 {
     public interface ISettingsFactory
     {
-        IScannerSettings GetScannerSettings();
+        ScannerSettings.ScannerSettings GetScannerSettings();
 
         void SaveScannerSettings(ScannerSettings.ScannerSettings settings);
+        //void SaveScannerSettings(IScannerSettings settings);
 
         IRemoteSettings GetRemoteSettings();
 
