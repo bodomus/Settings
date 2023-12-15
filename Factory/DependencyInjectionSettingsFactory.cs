@@ -1,8 +1,11 @@
+using LottoSheli.SendPrinter.Settings.Factory.ScannerSettings;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using UAM.VerifyEmployee.Factory;
+using LottoSheli.SendPrinter.Settings.Factory.RemoteSettings;
+using LottoSheli.SendPrinter.Settings.Factory.OcrSettings;
 
-namespace LottoSheli.SendPrinter.Bootstraper
+
+namespace LottoSheli.SendPrinter.Settings.Factory
 {
     class DependencyInjectionSettingsFactory : ISettingsFactory
     {
@@ -12,19 +15,35 @@ namespace LottoSheli.SendPrinter.Bootstraper
             _serviceProviderStrategy = serviceProviderStrategy;
         }
 
-        public IScannerSettings GetSettings()
+        public IScannerSettings GetScannerSettings()
         {
-            return _serviceProviderStrategy().GetRequiredService<IScannerSettings>();
+             var s = _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
+             //_serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>().Save();
+             return s.Get();
         }
 
-        //public IScannerSettings GetScannerSettings()
-        //{
-        //    return _serviceProviderStrategy().GetRequiredService<IScannerSettings>();
-        //}
 
-        //public IRemoteSettings GetRemoteSettings()
-        //{
-        //    return _serviceProviderStrategy().GetRequiredService<IRemoteSettings>();
-        //}
+        public void SaveScannerSettings(ScannerSettings.ScannerSettings settings)
+        {
+            _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
+        }
+
+        public IOcrSettings GetOcrSettings()
+        {
+            return _serviceProviderStrategy().GetRequiredService<IOcrSettings>();
+        }
+
+        public IRemoteSettings GetRemoteSettings()
+        {
+            return _serviceProviderStrategy().GetRequiredService<IRemoteSettings>();
+        }
+
+        public void SaveScannerSettings()
+        {
+            var adapter = _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
+            var settings = adapter.Get();
+            adapter.Save(settings);
+            throw new NotImplementedException();
+        }
     }
 }

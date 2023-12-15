@@ -5,12 +5,11 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 
-namespace UAM.VerifyEmployee
+namespace LottoSheli.SendPrinter.Settings
 {
     public class App
     {
@@ -19,7 +18,7 @@ namespace UAM.VerifyEmployee
         private readonly string _сonnectionString;
         private readonly string _domain;
         private Stopwatch _stopwatch;
-        
+
 
         public App(IConfigurationRoot config, ILogger<App> logger)
         {
@@ -27,7 +26,7 @@ namespace UAM.VerifyEmployee
             _config = config;
             _сonnectionString = _config.GetConnectionString("ConnectionString");
             _domain = _config.GetSection("Domain").Get<string>();
-            
+
         }
 
         public async Task Run()
@@ -38,7 +37,7 @@ namespace UAM.VerifyEmployee
             _stopwatch.Start();
             try
             {
-                
+
 
             }
             catch (Exception ex)

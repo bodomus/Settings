@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UAM.VerifyEmployee.Factory
+﻿namespace LottoSheli.SendPrinter.Settings.Factory
 {
     public class CommonSettings
     {
         public string LottoHomeDirectory = "LottoSendPrinter";
         public string SettingsDBFileName = "settings.db";
         public string SettingsDBPass = "settings_pass";
-        public string OcrSettingsVersion = "2";
+        public string OcrSettingsVersion = "V2";
     }
 }

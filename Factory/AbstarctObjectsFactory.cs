@@ -11,12 +11,14 @@ using NLog;
 using NLog.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Threading;
+using LottoSheli.SendPrinter.Settings.Factory;
+using LottoSheli.SendPrinter.Settings.Factory.OcrSettings;
+using LottoSheli.SendPrinter.Settings.Factory.ScannerSettings;
 using Microsoft.Extensions.Options;
-using UAM.VerifyEmployee.Factory;
-using UAM.VerifyEmployee.Settings;
+using LottoSheli.SendPrinter.Settings.Factory.ScannerSettings;
+using LottoSheli.SendPrinter.Settings.Factory.RemoteSettings;
 
-
-namespace LottoSheli.SendPrinter.Bootstraper
+namespace LottoSheli.SendPrinter.Settings.Factory
 {
 
     /// <summary>
@@ -34,22 +36,41 @@ namespace LottoSheli.SendPrinter.Bootstraper
             var services = new ServiceCollection();
             services.Configure<CommonSettings>(config.GetSection("MyConfig"));
             services.AddSingleton<IAbstractObjectsFactory>(this);
-            
+
 
             InitLogger(services, config);
             InitSettings(services);
-            services.AddSingleton<IConfiguration>(config);
-            services.AddSingleton<IScannerSettings>(new ScannerSettings());
+            services.AddSingleton(config);
+
             _serviceProvider = services.BuildServiceProvider();
             var s = _serviceProvider.GetService<IOptions<CommonSettings>>();
-            //_logger = GetLoggerFactory().CreateLogger<AbstarctObjectsFactory>();
-            var remote = _serviceProvider.GetRequiredService<IRemoteSettings>();
+
+
+
+
+
+            //var sc = _serviceProvider.GetService(typeof(ScannerSettingsAdapter));
+            //var t = _serviceProvider.GetRequiredService<ScannerSettingsAdapter>();
+            //IScannerSettings t1 = t.Get();
+            var setFactory = _serviceProvider.GetRequiredService<ISettingsFactory>();
+            //var ocr = setFactory.GetOcrSettings();
+            //var scan = setFactory.GetScannerSettings();
+            var sc = _serviceProvider.GetService(typeof(ScannerSettingsAdapter));
+            var settings = setFactory.GetScannerSettings();
+            settings.Scanner_SnippetRectangle_Height = 1000;
+            //setFactory.SaveScannerSettings(settings);
+
+
         }
 
         private void InitSettings(ServiceCollection services)
         {
-            services.AddSingleton<IRemoteSettings, RemoteSettings>();
-
+            services.AddSingleton<ISettingsFactory>(new DependencyInjectionSettingsFactory(GetServiceProvider))
+                .AddSingleton<IRemoteSettings, RemoteSettings.RemoteSettings>()
+                .AddSingleton<IScannerSettings, ScannerSettings.ScannerSettings>()
+                //.AddSingleton<IAdapter<ScannerSettings.ScannerSettingsAdapter>, ScannerSettingsAdapter<ScannerSettings.ScannerSettings>>()
+                .AddSingleton<IOcrSettings, OcrSettings.OcrSettings>()
+                .AddTransient<ScannerSettingsAdapter>();
         }
 
 
@@ -60,7 +81,8 @@ namespace LottoSheli.SendPrinter.Bootstraper
 
         private static void InitLogger(IServiceCollection services, IConfiguration config)
         {
-            services.AddLogging(loggingBuilder => {
+            services.AddLogging(loggingBuilder =>
+            {
                 // configure Logging with NLog
                 loggingBuilder.ClearProviders();
                 loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);

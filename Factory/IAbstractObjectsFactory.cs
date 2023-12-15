@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 
-namespace LottoSheli.SendPrinter.Bootstraper
+namespace LottoSheli.SendPrinter.Settings.Factory
 {
     /// <summary>
     /// Provides global objects factory

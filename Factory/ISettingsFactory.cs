@@ -1,11 +1,17 @@
-﻿namespace UAM.VerifyEmployee.Factory
+﻿using LottoSheli.SendPrinter.Settings.Factory.OcrSettings;
+using LottoSheli.SendPrinter.Settings.Factory.RemoteSettings;
+using LottoSheli.SendPrinter.Settings.Factory.ScannerSettings;
+
+namespace LottoSheli.SendPrinter.Settings.Factory
 {
     public interface ISettingsFactory
     {
-        IScannerSettings GetSettings();
+        IScannerSettings GetScannerSettings();
 
-        //IRemoteSettings GetRemoteSettings();
+        void SaveScannerSettings(ScannerSettings.ScannerSettings settings);
 
-        //IScannerSettings GetScannerSettings();
+        IRemoteSettings GetRemoteSettings();
+
+        IOcrSettings GetOcrSettings();
     }
 }

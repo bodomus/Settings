@@ -1,47 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Text.Json.Serialization;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using NLog;
 using LiteDB;
 using LiteDB.Engine;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 using System.Linq;
-using Microsoft.Extensions.Options;
-using UAM.VerifyEmployee.Factory;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 
-namespace UAM.VerifyEmployee.Settings
+namespace LottoSheli.SendPrinter.Settings.Settings
 {
     /// <summary>
     /// Base class for load settings
     /// </summary>
     public abstract class SettingsBase<T>
     {
-        public static string FileName = "settings.db";
-        private SettingsStore _settingsStore = SettingsStore.Instance;
+        protected abstract string SectionName { get; }
+        protected static string DbName = "settings.db";
+        //protected abstract string JsonFileName { get; }
+        private readonly SettingsStore _settingsStore = SettingsStore.Instance;
         public static string LottoHome => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "LottoSendPrinter");
-        private static string DbFileName => Path.Combine(LottoHome, FileName);
+        private static string DbFileName => Path.Combine(LottoHome, DbName);
+        private string DefaultSettingsFile => Path.Combine(_settingsDir, $"{SectionName}.json");
+        protected virtual string _settingsDir => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Settings");
+        //protected virtual string _settingsFile => Path.Combine(_settingsDir, $"{JsonFileName}.json");
+        private string _settingsSection;
+        public T CurrentSettings { get; set; }
+        private IConfiguration _configuration;
 
-        protected T _currentSettings { get; set; }
-
-        private IOptions<CommonSettings> _options;
-
-        protected SettingsBase()
+        public SettingsBase(IConfiguration configuration)
         {
-            var l = new List<int>();
-            //_options = options;
+            _configuration = configuration;
+            Load();
         }
 
-        protected void Load(string settingsSection)
+        protected void Load()
         {
-            var isInDB = SettingsStore.Instance.HasSettings(settingsSection);
-            _currentSettings = _settingsStore.HasSettings(settingsSection)
-                ? _settingsStore.GetSettingsFromDB<T>(settingsSection)
-                : LoadJson<T>(settingsSection);
+
+            var isInDB = SettingsStore.Instance.HasSettings(SectionName);
+            CurrentSettings = _settingsStore.GetSettingsFromDB<T>(SectionName);
+            CurrentSettings = isInDB
+                ? CurrentSettings
+                : LoadJson<T>(DefaultSettingsFile);
         }
 
         protected void LoadDefault()
@@ -49,7 +50,7 @@ namespace UAM.VerifyEmployee.Settings
             throw new NotImplementedException();
         }
 
-        protected void Save()
+        protected void SaveData(T sett)
         {
             throw new NotImplementedException();
         }
@@ -91,7 +92,6 @@ namespace UAM.VerifyEmployee.Settings
             return db;
         }
 
-
         private class SettingsStore
         {
 
@@ -127,7 +127,7 @@ namespace UAM.VerifyEmployee.Settings
                 var collection = _db.GetCollection<SettingsItem>(collectionName);
                 var item = collection.FindAll().FirstOrDefault();
                 _db.Commit();
-                return null == item ? default(TSettings) : JsonConvert.DeserializeObject<TSettings>(item.Json);
+                return null == item ? default : JsonConvert.DeserializeObject<TSettings>(item.Json);
             }
             public void SaveSettingsToDB<TSettings>(TSettings settings, string collectionName)
             {
@@ -147,6 +147,11 @@ namespace UAM.VerifyEmployee.Settings
             }
 
         }
-        
+
+    }
+
+    public class SettingsHelper
+    {
+
     }
 }

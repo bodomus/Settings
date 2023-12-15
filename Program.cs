@@ -2,7 +2,6 @@
 using System.Data.Common;
 using System.IO;
 using System.Threading.Tasks;
-using LottoSheli.SendPrinter.Bootstraper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,9 +9,9 @@ using Microsoft.Extensions.Hosting;
 
 using NLog;
 using NLog.Extensions.Logging;
-using UAM.VerifyEmployee.Factory;
+using LottoSheli.SendPrinter.Settings.Factory;
 
-namespace UAM.VerifyEmployee
+namespace LottoSheli.SendPrinter.Settings
 {
     class Program
     {
@@ -51,8 +50,7 @@ namespace UAM.VerifyEmployee
             ConfigureServices(serviceCollection);
 
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
-            SetupNLog(serviceCollection, configuration);
-
+            
             try
             {
                 await serviceProvider.GetService<App>().Run();
@@ -75,19 +73,19 @@ namespace UAM.VerifyEmployee
             var env = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
             var confFile = $"appsettings.json";
             //var str = $"{env}";
-            configuration = new ConfigurationBuilder()
+            var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
             .AddJsonFile(confFile, optional: true, reloadOnChange: true)
             .Build();
             serviceCollection.AddLogging();
-            
+
 
             serviceCollection.AddSingleton(LoggerFactory.Create(builder =>
             {
                 builder.AddNLog();
             }));
 
-            serviceCollection.AddSingleton<IConfigurationRoot>(configuration);
+            serviceCollection.AddSingleton(configuration);
             //serviceCollection.AddSingleton<DbProviderFactory>(System.Data.SqlClient.SqlClientFactory.Instance);
             serviceCollection.AddTransient<App>();
             CommonSettings mySetting = configuration.Get<CommonSettings>();
@@ -98,7 +96,7 @@ namespace UAM.VerifyEmployee
             using (var objectsFactory = new AbstarctObjectsFactory(configuration))
             {
                 var model = objectsFactory.GetSettings();
-                
+
 
             }
 
