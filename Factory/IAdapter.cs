@@ -3,6 +3,5 @@
     public interface IAdapter<T>
     {
         T Get();
-        
     }
 }

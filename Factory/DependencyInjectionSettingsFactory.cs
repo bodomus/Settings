@@ -4,6 +4,8 @@ using System;
 using LottoSheli.SendPrinter.Settings.Factory.RemoteSettings;
 using LottoSheli.SendPrinter.Settings.Factory.OcrSettings;
 
+using LottoSheli.SendPrinter.Settings.Factory.ScannerSettings;
+
 
 namespace LottoSheli.SendPrinter.Settings.Factory
 {
@@ -17,24 +19,16 @@ namespace LottoSheli.SendPrinter.Settings.Factory
 
         public ScannerSettings.ScannerSettings GetScannerSettings()
         {
-             var s = _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
-             //_serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>().Save();
+             var s = _serviceProviderStrategy().GetRequiredService<ScannerSettingsService>();
+             //_serviceProviderStrategy().GetRequiredService<ScannerSettingsService>().Save();
              return s.Get();
         }
 
         public void SaveScannerSettings(ScannerSettings.ScannerSettings settings)
         {
             
-            var adapter = _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
+            var adapter = _serviceProviderStrategy().GetRequiredService<ScannerSettingsService>();
             adapter.Save(settings);
-        }
-
-        public void SaveScannerSettings()
-        {
-            var adapter = _serviceProviderStrategy().GetRequiredService<ScannerSettingsAdapter>();
-            var settings = adapter.Get();
-            adapter.Save(settings);
-            throw new NotImplementedException();
         }
 
         public IOcrSettings GetOcrSettings()

@@ -3,11 +3,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace LottoSheli.SendPrinter.Settings.Factory.OcrSettings
 {
-    public class OcrSettingsAdapter : SettingsBase<OcrSettings>
+    public class OcrSettingsService : Service<OcrSettings>
     {
         protected override string SectionName => "OcrSettings";
 
-        public OcrSettingsAdapter(IConfiguration config) : base(config)
+        public OcrSettingsService(IConfiguration config) : base(config)
         {
         }
     }

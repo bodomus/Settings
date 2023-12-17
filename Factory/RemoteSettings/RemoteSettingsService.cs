@@ -5,12 +5,12 @@ using Microsoft.Extensions.Options;
 
 namespace LottoSheli.SendPrinter.Settings.Factory.RemoteSettings
 {
-    public class RemoteSettingsAdapter : SettingsBase<RemoteSettings>
+    public class RemoteSettingsService : Service<RemoteSettings>
     {
         protected override string SectionName { get; } = "RemoteSettings";
         public string Resilent { get; }
 
-        public RemoteSettingsAdapter(IConfiguration configuration) : base(configuration)
+        public RemoteSettingsService(IConfiguration configuration) : base(configuration)
         {
 
 

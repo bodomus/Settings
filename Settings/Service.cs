@@ -14,21 +14,22 @@ namespace LottoSheli.SendPrinter.Settings.Settings
     /// <summary>
     /// Base class for load settings
     /// </summary>
-    public abstract class SettingsBase<T>
+    public abstract class Service<T>
     {
-        protected abstract string SectionName { get; }
-        protected static string DbName = "settings.db";
         private readonly SettingsStore _settingsStore = SettingsStore.Instance;
-        public static string LottoHome => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "LottoSendPrinter");
         private static string DbFileName => Path.Combine(LottoHome, DbName);
         private string DefaultSettingsFile => Path.Combine(_settingsDir, $"{SectionName}.json");
-        protected virtual string _settingsDir => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Settings");
-        //protected virtual string _settingsFile => Path.Combine(_settingsDir, $"{JsonFileName}.json");
-        private string _settingsSection;
-        public T CurrentSettings { get; set; }
+        
         private IConfiguration _configuration;
+        protected abstract string SectionName { get; }
+        protected static string DbName = "settings.db";
+        protected virtual string _settingsDir =>
+            Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Settings");
+        public T CurrentSettings { get; set; }
+        public static string LottoHome =>
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "LottoSendPrinter");
 
-        public SettingsBase(IConfiguration configuration)
+        protected Service(IConfiguration configuration)
         {
             _configuration = configuration;
             Load();
@@ -40,13 +41,11 @@ namespace LottoSheli.SendPrinter.Settings.Settings
                 ? SettingsStore.Instance.GetSettingsFromDB<T>(SectionName)
                 : LoadJson<T>(DefaultSettingsFile);
         }
-
         protected void SaveData(T sett)
         {
             _settingsStore.SaveSettingsToDB(sett, SectionName);
         }
-
-        protected T LoadJson<T>(string fileName)
+        private T LoadJson<T>(string fileName)
         {
             T res;
             using (StreamReader r = new StreamReader(fileName))
@@ -57,8 +56,7 @@ namespace LottoSheli.SendPrinter.Settings.Settings
 
             return res;
         }
-
-        protected void SaveJson<T>(string fileName, T sourse)
+        private void SaveJson<T>(string fileName, T sourse)
         {
             using (StreamWriter file = File.CreateText(fileName))
             {
@@ -66,7 +64,6 @@ namespace LottoSheli.SendPrinter.Settings.Settings
                 serializer.Serialize(file, sourse);
             }
         }
-
         private static ILiteDatabase CreateDbContext()
         {
             ConnectionString connectionString = new ConnectionString
@@ -82,7 +79,6 @@ namespace LottoSheli.SendPrinter.Settings.Settings
 
             return db;
         }
-
         private class SettingsStore
         {
 
@@ -120,6 +116,7 @@ namespace LottoSheli.SendPrinter.Settings.Settings
                 _db.Commit();
                 return null == item ? default : JsonConvert.DeserializeObject<TSettings>(item.Json);
             }
+
             public void SaveSettingsToDB<TSettings>(TSettings settings, string collectionName)
             {
                 _db.BeginTrans();
@@ -138,11 +135,5 @@ namespace LottoSheli.SendPrinter.Settings.Settings
             }
 
         }
-
-    }
-
-    public class SettingsHelper
-    {
-
     }
 }

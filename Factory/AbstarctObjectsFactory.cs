@@ -1,21 +1,14 @@
+using System;
 using Microsoft.Extensions.DependencyInjection;
 
-using System;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using NLog;
 using NLog.Extensions.Logging;
-using Newtonsoft.Json;
-using System.Threading;
-using LottoSheli.SendPrinter.Settings.Factory;
 using LottoSheli.SendPrinter.Settings.Factory.OcrSettings;
 using LottoSheli.SendPrinter.Settings.Factory.ScannerSettings;
 using Microsoft.Extensions.Options;
-using LottoSheli.SendPrinter.Settings.Factory.ScannerSettings;
 using LottoSheli.SendPrinter.Settings.Factory.RemoteSettings;
 
 namespace LottoSheli.SendPrinter.Settings.Factory
@@ -43,11 +36,11 @@ namespace LottoSheli.SendPrinter.Settings.Factory
             services.AddSingleton(config);
 
             _serviceProvider = services.BuildServiceProvider();
-            var s = _serviceProvider.GetService<IOptions<CommonSettings>>();
+            //var s = _serviceProvider.GetService<IOptions<CommonSettings>>();
             var setFactory = _serviceProvider.GetRequiredService<ISettingsFactory>();
-            var sc = _serviceProvider.GetService(typeof(ScannerSettingsAdapter));
+            //var sc = _serviceProvider.GetService(typeof(ScannerSettingsService));
             var settings = setFactory.GetScannerSettings();
-            settings.Scanner_SnippetRectangle_Height = 1000;
+            settings.Scanner_SnippetRectangle_Height = 2000;
             setFactory.SaveScannerSettings(settings);
         }
 
@@ -57,7 +50,7 @@ namespace LottoSheli.SendPrinter.Settings.Factory
                 .AddSingleton<IRemoteSettings, RemoteSettings.RemoteSettings>()
                 .AddSingleton<IScannerSettings, ScannerSettings.ScannerSettings>()
                 .AddSingleton<IOcrSettings, OcrSettings.OcrSettings>()
-                .AddTransient<ScannerSettingsAdapter>();
+                .AddTransient<ScannerSettingsService>();
         }
 
 
