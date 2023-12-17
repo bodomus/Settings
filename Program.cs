@@ -71,36 +71,32 @@ namespace LottoSheli.SendPrinter.Settings
             //IHostEnvironment env = hostingContext.HostingEnvironment;
             var host = Host.CreateDefaultBuilder();
             var env = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
-            var confFile = $"appsettings.json";
+            //var confFile = $"appsettings.json";
             //var str = $"{env}";
             var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
-            .AddJsonFile(confFile, optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true)
             .Build();
-            serviceCollection.AddLogging();
+            //serviceCollection.AddLogging();
 
 
-            serviceCollection.AddSingleton(LoggerFactory.Create(builder =>
-            {
-                builder.AddNLog();
-            }));
+            //serviceCollection.AddSingleton(LoggerFactory.Create(builder =>
+            //{
+            //    builder.AddNLog();
+            //}));
 
-            serviceCollection.AddSingleton(configuration);
+            //serviceCollection.AddSingleton(configuration);
             //serviceCollection.AddSingleton<DbProviderFactory>(System.Data.SqlClient.SqlClientFactory.Instance);
             serviceCollection.AddTransient<App>();
-            CommonSettings mySetting = configuration.Get<CommonSettings>();
+            //CommonSettings mySetting = configuration.Get<CommonSettings>();
 
-            ConfigurationManager conf = new ConfigurationManager();
-            var value = conf.Get<CommonSettings>();
+            //ConfigurationManager conf = new ConfigurationManager();
+            //var value = conf.Get<CommonSettings>();
 
             using (var objectsFactory = new AbstarctObjectsFactory(configuration))
             {
                 var model = objectsFactory.GetSettings();
-
-
             }
-
-
         }
     }
 }

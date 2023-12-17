@@ -27,7 +27,7 @@ namespace LottoSheli.SendPrinter.Settings.Factory
             //Directory.CreateDirectory(Settings.LottoHome);
 
             var services = new ServiceCollection();
-            services.Configure<CommonSettings>(config.GetSection("MyConfig"));
+//            services.Configure<CommonSettings>(config.GetSection("MyConfig"));
             services.AddSingleton<IAbstractObjectsFactory>(this);
 
 
@@ -36,11 +36,9 @@ namespace LottoSheli.SendPrinter.Settings.Factory
             services.AddSingleton(config);
 
             _serviceProvider = services.BuildServiceProvider();
-            //var s = _serviceProvider.GetService<IOptions<CommonSettings>>();
             var setFactory = _serviceProvider.GetRequiredService<ISettingsFactory>();
-            //var sc = _serviceProvider.GetService(typeof(ScannerSettingsService));
             var settings = setFactory.GetScannerSettings();
-            settings.Scanner_SnippetRectangle_Height = 2000;
+            settings.Scanner_SnippetRectangle_Height = 3000;
             setFactory.SaveScannerSettings(settings);
         }
 

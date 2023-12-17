@@ -19,16 +19,12 @@ namespace LottoSheli.SendPrinter.Settings.Factory
 
         public ScannerSettings.ScannerSettings GetScannerSettings()
         {
-             var s = _serviceProviderStrategy().GetRequiredService<ScannerSettingsService>();
-             //_serviceProviderStrategy().GetRequiredService<ScannerSettingsService>().Save();
-             return s.Get();
+             return _serviceProviderStrategy().GetRequiredService<ScannerSettingsService>().Get();
         }
 
         public void SaveScannerSettings(ScannerSettings.ScannerSettings settings)
         {
-            
-            var adapter = _serviceProviderStrategy().GetRequiredService<ScannerSettingsService>();
-            adapter.Save(settings);
+            _serviceProviderStrategy().GetRequiredService<ScannerSettingsService>().Save(settings);
         }
 
         public IOcrSettings GetOcrSettings()

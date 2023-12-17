@@ -35,16 +35,23 @@ namespace LottoSheli.SendPrinter.Settings.Settings
             Load();
         }
 
-        protected void Load()
+        private void Load()
         {
             CurrentSettings = SettingsStore.Instance.HasSettings(SectionName)
                 ? SettingsStore.Instance.GetSettingsFromDB<T>(SectionName)
                 : LoadJson<T>(DefaultSettingsFile);
         }
-        protected void SaveData(T sett)
+
+        public T Get()
         {
-            _settingsStore.SaveSettingsToDB(sett, SectionName);
+            return CurrentSettings;
         }
+
+        public void Save(T settings)
+        {
+            _settingsStore.SaveSettingsToDB(settings, SectionName);
+        }
+
         private T LoadJson<T>(string fileName)
         {
             T res;

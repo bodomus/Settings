@@ -12,14 +12,5 @@ namespace LottoSheli.SendPrinter.Settings.Factory.ScannerSettings
 
         protected override string SectionName => "ScannerSettings";
 
-        public ScannerSettings Get()
-        {
-            return this.CurrentSettings;
-        }
-
-        public void Save(ScannerSettings settings)
-        {
-            SaveData(settings);
-        }
     }
 }
